@@ -21,41 +21,27 @@ _MONTH_TO_SEASON = {
 
 
 def lookup_plant(plant_name: str) -> dict:
-    """
-    Search the plant database for a plant by name and return its care information.
-
-    TODO — Milestone 1:
-
-    Right now this always returns a "not found" response. Your job is to implement
-    the search logic so it can actually find plants.
-
-    The plant database (_plant_db) is a dict where keys are lowercase slugs like
-    "pothos", "snake_plant", "fiddle_leaf_fig". Each plant also has a "display_name"
-    field and an "aliases" list with common alternate names.
-
-    Your implementation should handle all three:
-      1. Direct key match (e.g., "pothos" → finds "pothos")
-      2. Display name match (e.g., "Pothos" → finds "pothos")
-      3. Alias match (e.g., "devil's ivy" → finds "pothos")
-
-    All matching should be case-insensitive. Strip whitespace from the input.
-
-    Return format when found:
-      {"found": True, "plant": <the full plant dict>}
-
-    Return format when not found:
-      {"found": False, "name": <original input>, "message": <helpful string>}
-
-    The message in the not-found case matters — the agent will use it to decide
-    what to tell the user. Your spec has a dedicated field for this — think about
-    what information would actually be helpful to the agent.
-
-    Before writing code, complete the lookup_plant section of specs/tool-functions-spec.md.
-    """
+    # Normalize input
+    normalized = plant_name.strip().lower()
+    
+    # Search: slug → display name → aliases
+    for slug, plant in _plant_db.items():
+        if normalized == slug:
+            return {"found": True, "plant": plant}
+        if normalized == plant["display_name"].lower():
+            return {"found": True, "plant": plant}
+        if normalized in [a.lower() for a in plant.get("aliases", [])]:
+            return {"found": True, "plant": plant}
+    
     return {
         "found": False,
         "name": plant_name,
-        "message": "Plant lookup not yet implemented. Complete Milestone 1.",
+        "message": (
+            f"'{plant_name}' is not in the plant database. "
+            "Do not invent specific care instructions. "
+            "Acknowledge the plant isn't in your database, then offer general advice "
+            "based on its plant type (succulent, tropical, fern, etc.) if you can infer it."
+        ),
     }
 
 

@@ -70,7 +70,11 @@ likely match for clean user input. Aliases are the broadest net, so they go last
 *Aliases are stored as a list of strings. How will you check if the normalized input matches any alias in the list? Write your approach in pseudocode or plain English.*
 
 ```
-[your answer here]
+Iterate through all plants in _plant_db. For each plant, normalize each alias to lowercase and check if the normalized input is in that list:
+  normalized in [a.lower() for a in plant.get("aliases", [])]
+
+This handles any casing the user types ("Devil's Ivy", "DEVIL'S IVY", etc.) and safely skips plants with no aliases via .get("aliases", []).
+
 ```
 
 ---
@@ -80,7 +84,7 @@ likely match for clean user input. Aliases are the broadest net, so they go last
 *When a plant isn't found, the agent will read your message and use it to decide what to tell the user. Write the exact string you'll return — make it useful to the agent, not just to a human reading logs.*
 
 ```
-[your answer here]
+"'{plant_name}' is not in the plant database. Do not invent specific care instructions. Acknowledge the plant isn't in your database, then offer general advice based on its plant type (succulent, tropical, fern, etc.) if you can infer it from the name."
 ```
 
 ---
